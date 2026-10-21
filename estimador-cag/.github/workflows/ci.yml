@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: estimador-cag
+    env:
+      ANTHROPIC_API_KEY: test-key
+      LLM_MODEL: claude-test-model
+      LLM_PROVIDER: anthropic
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependencias
+        run: uv sync --all-extras --dev
+
+      - name: Lint (ruff)
+        run: uv run ruff check src tests
+
+      - name: Tests (estructura + API)
+        run: uv run pytest -v
+
+      - name: Smoke test (arranca el servidor real)
+        run: |
+          uv run uvicorn estimador_cag.main:app --port 8000 &
+          for i in $(seq 1 15); do
+            curl -sf http://localhost:8000/health && exit 0
+            sleep 1
+          done
+          echo "El servidor no arrancó" && exit 1

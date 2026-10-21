@@ -10,3 +10,8 @@ http://localhost:8000/docs#/estimations/estimate_api_v1_estimate_post
 {
   "transcription": "En la reunión con el cliente se discutió la necesidad de una aplicación móvil con login, catálogo de productos, carrito de compra y pasarela de pago. El cliente quiere tenerlo listo en tres meses."
 }
+
+## Testing con pytest
+Desde la carpeta de proyecto estimador-cag
+- uv add --dev pytest httpx ruff
+- uv run pytest -v 
