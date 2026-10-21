@@ -1,5 +1,5 @@
 # MasterIA_Proyectos
-Projects repository
+Projects repository from IA Masters
 
 ## Arrancar el servidor
 uv run uvicorn estimador_cag.main:app --reload
