@@ -2,6 +2,7 @@
 from textwrap import dedent
 
 from anthropic import AsyncAnthropic
+
 from estimador_cag.config import get_settings
 from estimador_cag.context.examples import ESTIMATION_EXAMPLES
 

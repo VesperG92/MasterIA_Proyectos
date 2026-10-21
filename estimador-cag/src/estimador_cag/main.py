@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 from estimador_cag.routers import estimations
 
 app = FastAPI(

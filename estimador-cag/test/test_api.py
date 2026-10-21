@@ -1,3 +1,6 @@
+import anthropic
+import httpx
+
 from fastapi.testclient import TestClient
 
 from estimador_cag.main import app
@@ -49,11 +52,15 @@ def test_estimate_too_short_returns_422():
 
 def test_estimate_llm_failure_returns_502(monkeypatch):
     async def failing_generate(transcription: str) -> dict:
-        raise RuntimeError("fallo simulado")
+        raise anthropic.APIConnectionError(
+            request=httpx.Request("POST", "https://api.anthropic.com")
+        )
 
-    monkeypatch.setattr("estimador_cag.routers.estimations.generate_estimation", failing_generate)
+    monkeypatch.setattr(
+        "estimador_cag.routers.estimations.generate_estimation", failing_generate
+    )
 
     response = client.post("/api/v1/estimate", json={"transcription": VALID_TEXT})
 
     assert response.status_code == 502
-    assert "fallo simulado" in response.json()["detail"]
+    assert "Error al generar la estimación" in response.json()["detail"]
